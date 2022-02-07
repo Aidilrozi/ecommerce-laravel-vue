@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('meta-title') Home - Laravel Tailwind Boilerplate Vue Ready @endsection
+@section('meta-title') Supplycart Assesment @endsection
 
 @push('css')
 

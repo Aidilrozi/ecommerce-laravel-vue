@@ -48,9 +48,7 @@
                 <button  @click="toggleForm" class="bg-purple-800 button group relative w-full flex justify-center py-2 px-4 my-2 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                 <span class="absolute left-0 inset-y-0 flex items-center pl-3">
                 <!-- Heroicon name: solid/lock-closed -->
-                <svg class="h-5 w-5 text-purple-500 group-hover:text-purple-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-                </svg>
+                
                 </span>
                 Register
             </button>
@@ -76,7 +74,7 @@
             </div>
             <div>
                 <label for="password-confirmation" class="sr-only">Password Confirmation</label>
-                <input id="password-confirmation" name="password_confirmation" v-model="formRegister.passwordConfirmation" type="password" autocomplete="current-password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Password Confirmation">
+                <input id="password-confirmation" name="password_confirmation" v-model="formRegister.password_confirmation" type="password" autocomplete="current-password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Password Confirmation">
             </div>
             
             </div>
@@ -93,9 +91,7 @@
                 <button  v-on:click.prevent="handleRegister" class="bg-purple-800 button group relative w-full flex justify-center py-2 px-4 my-2 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                 <span class="absolute left-0 inset-y-0 flex items-center pl-3">
                 <!-- Heroicon name: solid/lock-closed -->
-                <svg class="h-5 w-5 text-purple-500 group-hover:text-purple-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-                </svg>
+          
                 </span>
                 Register
             </button>
@@ -137,14 +133,14 @@ export default {
                 name:'',
                 email:'',
                 password:'',
-                passwordConfirmation:'',
+                password_confirmation:'',
                
             },
             register:{
-                email:'test@test.com',
-                password:'1qaz2wsx3edc',
-                password_confirmation:'1qaz2wsx3edc',
-                name:'testing'
+                email:'',
+                password:'',
+                password_confirmation:'',
+                name:''
             },
             token:'',
             userIsAuthenticated : this.$store.state.isAuthenticated
@@ -161,6 +157,7 @@ export default {
         axios.get('/sanctum/csrf-cookie').then(() => {
             axios.post('/login', this.form)
             .then(response => {
+                
                 console.log(response.status)
                 console.log('hello');
                 if(response.status == 200){
@@ -169,6 +166,8 @@ export default {
                 this.$router.push('/app/home') 
                 this.getToken();
                 }
+                this.$store.commit(LOAD, false)
+                 alert(response)
             })
             .catch(error => {
                 console.log('Error: ', error)
@@ -176,14 +175,30 @@ export default {
         })
         },
         handleRegister() {
+        this.$store.commit(LOAD, true)
         axios.get('/sanctum/csrf-cookie').then(() => {
-            axios.post('/register', this.register)
+            axios.post('/register', this.formRegister)
             .then(response => {
                 console.log(response)
-                this.$router.push('/app/home') 
-
+                
+                
+               if(response.status == 201){
+                this.$store.commit(ISAUTHENTICATED, true)
+                this.$store.commit(LOAD, false)
+                alert("Account created successfully")
+                this.isLogin = true;
+                // this.$router.push('/app/home') 
+                this.getToken();
+                }else{
+                    this.$store.commit(LOAD, false)
+                    alert(response.data.message)
+                    
+                }
+                this.$store.commit(LOAD, false)
+                    alert(response)
             })
             .catch(error => {
+                 this.$store.commit(LOAD, false)
                 console.log('Error: ', error)
             })
         })

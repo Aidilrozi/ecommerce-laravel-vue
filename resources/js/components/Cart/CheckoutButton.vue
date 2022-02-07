@@ -40,13 +40,14 @@ export default {
                 }
             }
            this.$store.commit(LOAD, true)
-                
-            axios.get('/api/order/list',config).then(response =>{
-               console.log(response);
+        axios.post('/api/order/create', this.$store.state.cart,config).then(response =>{
+                 console.log(response);
                this.$store.commit(LOAD, false)
                this.$store.commit(CLEARCART,'');
                 this.$router.push('/app/checkout')
-            })
+        
+        })
+            
             
             
         }
